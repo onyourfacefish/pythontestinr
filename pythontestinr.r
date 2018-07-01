@@ -49,10 +49,13 @@ View(bank_list)
 
 highest_bank <- data %>%
   group_by(bank_name) %>%
-  summarize(top_bank_balance = max(sum(balance))) %>%
-  arrange(desc(top_bank_balance)) %>%
+  summarize(top_bank_balance = sum(balance)) %>%
+  arrange(desc(top_bank_balance))
   slice(1:1)
-View(highest_bank)
+
+Q1answer <- highest_bank$bank_name[1]
+View(Q1answer)
+
 
   # there are accounts with missing bank names (NAs), let's see if it impacts our findings above
 
@@ -61,10 +64,9 @@ nobank <- data %>%
   summarize(nobank_balance = sum(balance))
 View(nobank)
 
-if (nobank$nobank_balance > (Bank_balances$bank_balance_total[1] - Bank_balances$bank_balance_total[2])) {
+if (nobank$nobank_balance > (highest_bank$top_bank_balance[1] - highest_bank$top_bank_balance[2])) {
   print("DAMN, account balances without a bank name exceeds the ∆ between the top two banks... Bad data.") & stop()
 } else {print("Cool, even though some accounts don't have a bank name, they won't change the outcome")}
-
 
 
 # Question 2 --------------------------------------------------------------
@@ -72,12 +74,12 @@ if (nobank$nobank_balance > (Bank_balances$bank_balance_total[1] - Bank_balances
 
 #get number of accounts per bank then summarise amount/accounts, sort, and print
 
-accounts <- data %>%
+Q2answer <- data %>%
   group_by(bank_name) %>%
   summarise(amt_over_accts = sum(balance)/n()) %>%
   arrange(desc(amt_over_accts)) %>%
   slice(1:1)
-View(accounts)
+View(Q2answer)
 
 
 # Question 3 --------------------------------------------------------------
@@ -101,11 +103,11 @@ ggplot(by_year, aes(x = year, y = annual_total)) +
 # Answers -----------------------------------------------------------------
 
 # Question 1: Find which bank registered the highest amount of unclaimed money
-print(highest_bank)
+print(Q1answer)
 
 # Question 2: Which bank registered the highest amount of unclaimed CAD$ relative to its number of
 #unclaimed bank accounts?
-print(accounts)
+print(Q2answer)
 
 # Question 3: Did the total number of unclaimed bank accounts increased or decreased over time?
 print("increased")
